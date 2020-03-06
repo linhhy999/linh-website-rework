@@ -4,7 +4,7 @@ block content
     .container.col-md-4.offset-md-2
         h1 Welcome to Linh's Website ^.^
         h2#form-title Login now!
-        form(action='/', method='post')
+        form#login-signup(action='/', method='post')
             .form-group
                 label(for='email') Email address:
                 input#email.form-control(type='email', aria-describedby='emailHelp', placeholder='Enter your Email address', name='email', required='')
@@ -12,17 +12,67 @@ block content
             .form-group
                 label(for='password') Password:
                 input#password.form-control(type='password', placeholder='Enter your Password', name='password', required='')
-            .form-group#password-confirm
-                label(for='confirm-password') Confirm password:
-                input#confirm-password.form-control(type='password', placeholder='Enter your Password again', name='confirm-password', required='')
+            .form-group#only-signup(hidden)
+                input#typee(hidden value="login")
+                label(for='confirmpassword') Confirm password:
+                input#confirmpassword.form-control(type='password', placeholder='Enter your Password again', name='confirmpassword')
+                label(for='fullname') Full name:
+                input#fullname.form-control(type='text', placeholder='Enter your Full name', name='text')
             .form-group
-                button#login.btn.btn-info(type='submit', onclick="Login()") Log in
-                button#signup.btn.btn-info(type='submit', onclick="Signup()") Sign up
-            .form-group
-                input#remember-me.form-check-input(type='checkbox', checked='checked', name='remember-me')
-                label(for='remember-me') Remember me
-            .form-group
-                span.password
-                    a(href='#') Forgot password?
-        .script
-
+                button#login.btn.btn-info(type='submit', onClick="Login()") Log in
+                button#signup.btn.btn-info(type='submit' , onclick='Signup()') Sign up
+        h3#message
+        span.password
+            a(href='#') Forgot password?
+    script(src="js/jquery-3.4.1.min.js")
+    script.
+        function Login(){
+            if (!$("#only-signup").is(":hidden")){
+                $("#only-signup").attr('hidden','')
+                $("#typee").val("login")
+                $("#form-title").value="Log in now!"
+                $("#confirmpassword").removeAttr('required')
+                $("#fullname").removeAttr('required')
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "/",
+                    data: {
+                        email: $("#email").val(),
+                        password: $("#password").val(),
+                        typee: $("#typee").val()
+                    },
+                    success: function(result){
+                        $("#message").html(result.message)
+                        $("#message").css("color",result.color)
+                    }
+                });
+            }
+        };
+        function Signup(){
+            if ($("#only-signup").is(":hidden")){
+                $("#only-signup").removeAttr('hidden')
+                $("#typee").val("signup")
+                $("#form-title").value="Sign up now!"
+                $("#confirmpassword").attr("required", "");
+                $("#fullname").attr("required", "");
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "/",
+                    data: {
+                        email: $("#email").val(),
+                        password: $("#password").val(),
+                        confirmpassword: $("#confirmpassword").val(),
+                        fullname: $("#fullname").val(),
+                        typee: $("#typee").val()
+                    },
+                    success: function(result){
+                        $("#message").html(result.message)
+                        $("#message").css("color",result.color)
+                    }
+                });
+            }
+        }

@@ -1,0 +1,10 @@
+{
+    "watch": [
+        "www",
+        "controller",
+        "package.json",
+        "app.js",
+        "model"
+      ]
+  }
+  
